@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { BellIcon } from '@heroicons/react/24/outline';
+import { useState, useRef } from 'react';
+import { BellIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import './App.css';
 
 // Types for our image editor state
@@ -14,6 +14,8 @@ interface ImageState {
 }
 
 function App() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const [selectedTool, setSelectedTool] = useState<Tool>('none');
   const [imageState, setImageState] = useState<ImageState>({
     url: null,
@@ -22,6 +24,52 @@ function App() {
       vertical: 0,
     },
   });
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImageState((prev) => ({ ...prev, url }));
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleDownload = () => {
+    if (!imageRef.current) return;
+
+    const img = imageRef.current;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) return;
+
+    // Set canvas size to match the padded image dimensions
+    canvas.width = img.naturalWidth + imageState.padding.horizontal * 2;
+    canvas.height = img.naturalHeight + imageState.padding.vertical * 2;
+
+    // Fill background with white
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the image with padding
+    ctx.drawImage(img, imageState.padding.horizontal, imageState.padding.vertical, img.naturalWidth, img.naturalHeight);
+
+    // Convert to blob and create download link
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'padded-image.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  };
 
   return (
     <div className="flex min-h-full flex-col">
@@ -58,6 +106,7 @@ function App() {
             {imageState.url ? (
               <div className="relative">
                 <img
+                  ref={imageRef}
                   src={imageState.url}
                   alt="Preview"
                   className="mx-auto max-w-full"
@@ -65,23 +114,29 @@ function App() {
                     padding: `${imageState.padding.vertical}px ${imageState.padding.horizontal}px`,
                   }}
                 />
+                <div className="absolute bottom-4 right-4 flex gap-2">
+                  <button
+                    onClick={handleDownload}
+                    className="rounded-md bg-pink-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-pink-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600"
+                  >
+                    <ArrowDownTrayIcon className="size-5" />
+                  </button>
+                  <button
+                    onClick={handleUploadClick}
+                    className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                  >
+                    Change Image
+                  </button>
+                </div>
               </div>
             ) : (
-              <div className="flex h-96 items-center justify-center rounded-lg border-2 border-dashed border-gray-300">
+              <div
+                onClick={handleUploadClick}
+                className="flex h-96 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 hover:border-pink-500 hover:bg-pink-50"
+              >
                 <div className="text-center">
                   <p className="text-gray-500">Drop an image here or click to upload</p>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const url = URL.createObjectURL(file);
-                        setImageState((prev) => ({ ...prev, url }));
-                      }
-                    }}
-                  />
+                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
                 </div>
               </div>
             )}
