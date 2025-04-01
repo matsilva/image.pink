@@ -1,0 +1,26 @@
+{
+    "tools": {
+        "padding": "Padding"
+    },
+    "notifications": {
+        "view": "View notifications",
+        "tooltip": "the ringing of the bell commands you"
+    },
+    "image": {
+        "upload": {
+            "prompt": "Drop an image here or click to upload"
+        },
+        "actions": {
+            "change": "Change Image",
+            "download": "Download Image"
+        }
+    },
+    "padding": {
+        "controls": {
+            "title": "Padding Controls",
+            "horizontal": "Horizontal Padding (px)",
+            "vertical": "Vertical Padding (px)",
+            "transparent": "Transparent Padding"
+        }
+    }
+}

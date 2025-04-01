@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { PaddingSettings, ImageDimensions, calculatePaddedDimensions, applyPaddingToCanvas } from './paddingCalculator';
+import { ImageDimensions, calculatePaddedDimensions, applyPaddingToCanvas } from './paddingCalculator';
+
+interface PaddingState {
+  horizontal: number;
+  vertical: number;
+  isTransparent: boolean;
+}
 
 interface UsePaddingOptions {
   maxPadding?: number;
@@ -7,18 +13,25 @@ interface UsePaddingOptions {
 
 export function usePadding(options: UsePaddingOptions = {}) {
   const { maxPadding = 500 } = options;
-  const [padding, setPadding] = useState<PaddingSettings>({
+  const [padding, setPadding] = useState<PaddingState>({
     horizontal: 0,
     vertical: 0,
+    isTransparent: false,
   });
 
-  const updatePadding = (type: keyof PaddingSettings, value: number) => {
+  const updatePadding = (type: keyof Omit<PaddingState, 'isTransparent'>, value: number) => {
     setPadding((prev) => ({
       ...prev,
       [type]: Math.min(Math.max(0, value), maxPadding),
     }));
   };
-  console.log('Padding:', padding);
+
+  const toggleTransparentPadding = () => {
+    setPadding((prev) => ({
+      ...prev,
+      isTransparent: !prev.isTransparent,
+    }));
+  };
 
   const downloadWithPadding = (img: HTMLImageElement, dimensions: ImageDimensions, filename = 'padded-image.png') => {
     const canvas = document.createElement('canvas');
@@ -26,10 +39,6 @@ export function usePadding(options: UsePaddingOptions = {}) {
     if (!ctx) return;
 
     const paddedDimensions = calculatePaddedDimensions(dimensions, padding);
-    console.log('Original dimensions:', dimensions);
-    console.log('Padding:', padding);
-    console.log('Scaled padding:', paddedDimensions.scaledPadding);
-    console.log('Padded dimensions:', paddedDimensions);
 
     applyPaddingToCanvas(ctx, img, dimensions, paddedDimensions);
 
@@ -49,6 +58,7 @@ export function usePadding(options: UsePaddingOptions = {}) {
   return {
     padding,
     updatePadding,
+    toggleTransparentPadding,
     downloadWithPadding,
   };
 }
