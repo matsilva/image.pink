@@ -1,0 +1,11 @@
+{
+  "apps": [
+    {
+      "name": "image-pink",
+      "source_dir": "dist",
+      "path": "/",
+      "description": "Quick and simple image tools. Free forever.",
+      "enabled": true
+    }
+  ]
+}
