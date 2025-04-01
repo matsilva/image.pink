@@ -69,13 +69,15 @@ function App() {
         </div>
       </header>
 
-      <div className="flex w-full h-[calc(100vh-4rem)]">
+      <div className="flex w-full h-[calc(100vh-4rem)] relative">
         {/* Left column - Tool selection */}
-        <aside className="hidden w-44 shrink-0 lg:block border-r border-gray-200 py-8 bg-white">
-          <nav className="flex flex-col w-full">
+        <aside className="hidden w-44 shrink-0 lg:block border-r border-gray-200 py-8 bg-white flex flex-col justify-between">
+          <nav className="flex flex-col">
             <button
               onClick={() => setSelectedTool('padding')}
-              className={`w-full  px-4 py-2 text-left ${selectedTool === 'padding' ? 'bg-pink-50 text-pink-700' : 'hover:bg-gray-100'}`}
+              className={`w-full rounded-lg px-4 py-2 text-left ${
+                selectedTool === 'padding' ? 'bg-pink-100 text-pink-700' : 'hover:bg-gray-100'
+              }`}
             >
               {t('tools.padding')}
             </button>
@@ -84,7 +86,7 @@ function App() {
 
         {/* Main area - Image preview and editing */}
         <main className="flex-1 min-w-0">
-          <div className="h-full bg-gray-50 [background-image:linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] [background-size:20px_20px]">
+          <div className="h-full bg-gray-50 [background-image:linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] [background-size:20px_20px] relative">
             {imageState.url ? (
               <div className="relative h-full flex items-center justify-center">
                 <div
@@ -129,6 +131,22 @@ function App() {
                 </div>
               </div>
             )}
+
+            {/* Godeploy ad */}
+            <a
+              href="https://godeploy.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-4 left-4 flex items-center gap-2 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-white hover:border-pink-200 transition-all duration-300 shadow-sm"
+            >
+              <div className="grid grid-cols-2 gap-0.5 mr-1.5">
+                <div className="w-1.5 h-1.5 rounded-sm bg-pink-300" />
+                <div className="w-1.5 h-1.5 rounded-sm bg-pink-400" />
+                <div className="w-1.5 h-1.5 rounded-sm bg-pink-400" />
+                <div className="w-1.5 h-1.5 rounded-sm bg-pink-500" />
+              </div>
+              deployed with godeploy
+            </a>
           </div>
         </main>
 
