@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { BellIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { usePadding } from './image-tools/padding/usePadding';
 import './App.css';
 
 // Types for our image editor state
@@ -7,9 +8,9 @@ type Tool = 'padding' | 'none';
 
 interface ImageState {
   url: string | null;
-  padding: {
-    horizontal: number;
-    vertical: number;
+  dimensions?: {
+    width: number;
+    height: number;
   };
 }
 
@@ -19,11 +20,9 @@ function App() {
   const [selectedTool, setSelectedTool] = useState<Tool>('none');
   const [imageState, setImageState] = useState<ImageState>({
     url: null,
-    padding: {
-      horizontal: 0,
-      vertical: 0,
-    },
   });
+
+  const { padding, updatePadding, downloadWithPadding } = usePadding();
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -37,38 +36,20 @@ function App() {
     fileInputRef.current?.click();
   };
 
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.target as HTMLImageElement;
+    setImageState((prev) => ({
+      ...prev,
+      dimensions: {
+        width: img.naturalWidth,
+        height: img.naturalHeight,
+      },
+    }));
+  };
+
   const handleDownload = () => {
-    if (!imageRef.current) return;
-
-    const img = imageRef.current;
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    // Set canvas size to match the padded image dimensions
-    canvas.width = img.naturalWidth + imageState.padding.horizontal * 2;
-    canvas.height = img.naturalHeight + imageState.padding.vertical * 2;
-
-    // Fill background with white
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw the image with padding
-    ctx.drawImage(img, imageState.padding.horizontal, imageState.padding.vertical, img.naturalWidth, img.naturalHeight);
-
-    // Convert to blob and create download link
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'padded-image.png';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 'image/png');
+    if (!imageRef.current || !imageState.dimensions) return;
+    downloadWithPadding(imageRef.current, imageState.dimensions);
   };
 
   return (
@@ -105,15 +86,14 @@ function App() {
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             {imageState.url ? (
               <div className="relative">
-                <img
-                  ref={imageRef}
-                  src={imageState.url}
-                  alt="Preview"
-                  className="mx-auto max-w-full"
+                <div
+                  className="mx-auto inline-block max-w-full bg-white"
                   style={{
-                    padding: `${imageState.padding.vertical}px ${imageState.padding.horizontal}px`,
+                    padding: `${padding.vertical}px ${padding.horizontal}px`,
                   }}
-                />
+                >
+                  <img ref={imageRef} src={imageState.url} alt="Preview" className="block max-w-full" onLoad={handleImageLoad} />
+                </div>
                 <div className="absolute bottom-4 right-4 flex gap-2">
                   <button
                     onClick={handleDownload}
@@ -155,16 +135,8 @@ function App() {
                     type="range"
                     min="0"
                     max="100"
-                    value={imageState.padding.horizontal}
-                    onChange={(e) =>
-                      setImageState((prev) => ({
-                        ...prev,
-                        padding: {
-                          ...prev.padding,
-                          horizontal: Number(e.target.value),
-                        },
-                      }))
-                    }
+                    value={padding.horizontal}
+                    onChange={(e) => updatePadding('horizontal', Number(e.target.value))}
                     className="mt-1 w-full"
                   />
                 </div>
@@ -174,16 +146,8 @@ function App() {
                     type="range"
                     min="0"
                     max="100"
-                    value={imageState.padding.vertical}
-                    onChange={(e) =>
-                      setImageState((prev) => ({
-                        ...prev,
-                        padding: {
-                          ...prev.padding,
-                          vertical: Number(e.target.value),
-                        },
-                      }))
-                    }
+                    value={padding.vertical}
+                    onChange={(e) => updatePadding('vertical', Number(e.target.value))}
                     className="mt-1 w-full"
                   />
                 </div>
