@@ -6,7 +6,7 @@ interface UsePaddingOptions {
 }
 
 export function usePadding(options: UsePaddingOptions = {}) {
-  const { maxPadding = 100 } = options;
+  const { maxPadding = 500 } = options;
   const [padding, setPadding] = useState<PaddingSettings>({
     horizontal: 0,
     vertical: 0,
@@ -18,6 +18,7 @@ export function usePadding(options: UsePaddingOptions = {}) {
       [type]: Math.min(Math.max(0, value), maxPadding),
     }));
   };
+  console.log('Padding:', padding);
 
   const downloadWithPadding = (img: HTMLImageElement, dimensions: ImageDimensions, filename = 'padded-image.png') => {
     const canvas = document.createElement('canvas');

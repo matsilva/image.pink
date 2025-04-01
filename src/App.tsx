@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { BellIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { usePadding } from './image-tools/padding/usePadding';
+import { Logo } from './components/Logo';
 import './App.css';
 
 // Types for our image editor state
@@ -56,8 +57,8 @@ function App() {
     <div className="flex min-h-full flex-col">
       <header className="shrink-0 border-b border-gray-200 bg-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center">
-            <h1 className="text-xl font-bold text-pink-600">image.pink</h1>
+          <div className="flex items-center gap-x-2">
+            <Logo />
           </div>
           <div className="flex items-center gap-x-8">
             <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-300">
