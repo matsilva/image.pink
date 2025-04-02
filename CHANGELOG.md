@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.2] - 2025-04-02
+
+- fix: update ImagePreview component styles for better responsiveness and layout consistency
+- feat: enhance header layout with GitHub link and improved spacing
+- chore: release v0.0.1
+
 ## [0.0.1] - 2025-04-02
 
 - feat: add badges and updated readme
