@@ -63,9 +63,9 @@ export function ImagePreview({
     <main className="flex-1 min-w-0">
       <div className="h-full bg-gray-50 [background-image:linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] [background-size:20px_20px] relative">
         {imageState.url ? (
-          <div className="relative h-full flex items-center justify-center">
+          <div className="relative h-full flex items-center justify-center p-8">
             <div
-              className={`max-w-full max-h-full border-2 border-dashed border-gray-300 rounded-sm ${
+              className={`relative inline-flex items-center justify-center border-2 border-dashed border-gray-300 rounded-sm ${
                 selectedTool === 'padding'
                   ? `${padding.options.isTransparent ? '' : 'bg-white'}`
                   : resizeOptions.backgroundColor
@@ -81,9 +81,6 @@ export function ImagePreview({
                   width: `${resizeOptions.width}px`,
                   height: `${resizeOptions.height}px`,
                   backgroundColor: resizeOptions.backgroundColor || 'transparent',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                 }),
               }}
             >
@@ -91,7 +88,7 @@ export function ImagePreview({
                 ref={imageRef}
                 src={imageState.url}
                 alt="Preview"
-                className={`max-w-full max-h-full ${
+                className={`max-h-[calc(100vh-10rem)] ${
                   selectedTool === 'resize' && resizeOptions.stretchToFill ? 'w-full h-full object-cover' : 'object-contain'
                 }`}
                 onLoad={onImageLoad}
