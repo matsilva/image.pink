@@ -1,6 +1,7 @@
 {
     "tools": {
-        "padding": "Padding"
+        "padding": "Padding",
+        "resize": "Resize"
     },
     "notifications": {
         "view": "View notifications",
@@ -21,6 +22,16 @@
             "horizontal": "Horizontal Padding (px)",
             "vertical": "Vertical Padding (px)",
             "transparent": "Transparent Padding"
+        }
+    },
+    "resize": {
+        "controls": {
+            "title": "Resize Controls",
+            "width": "Width (px)",
+            "height": "Height (px)",
+            "background": "Background Color",
+            "transparent": "Transparent",
+            "stretch": "Stretch to Fill"
         }
     }
 }
