@@ -69,8 +69,8 @@ export function ImagePreview({
                 selectedTool === 'padding'
                   ? `${padding.options.isTransparent ? '' : 'bg-white'}`
                   : resizeOptions.backgroundColor
-                  ? ''
-                  : 'bg-white'
+                    ? ''
+                    : 'bg-white'
               }`}
               style={{
                 ...(selectedTool === 'padding' && {
@@ -81,6 +81,7 @@ export function ImagePreview({
                   width: `${resizeOptions.width}px`,
                   height: `${resizeOptions.height}px`,
                   backgroundColor: resizeOptions.backgroundColor || 'transparent',
+                  overflow: 'hidden',
                 }),
               }}
             >
@@ -88,9 +89,19 @@ export function ImagePreview({
                 ref={imageRef}
                 src={imageState.url}
                 alt="Preview"
-                className={`max-h-[calc(100vh-10rem)] ${
-                  selectedTool === 'resize' && resizeOptions.stretchToFill ? 'w-full h-full object-cover' : 'object-contain'
+                className={`${
+                  selectedTool === 'resize'
+                    ? resizeOptions.stretchToFill
+                      ? 'w-full h-full object-cover'
+                      : 'max-w-full max-h-full object-contain'
+                    : 'max-h-[calc(100vh-10rem)] object-contain'
                 }`}
+                style={{
+                  ...(selectedTool === 'resize' && {
+                    width: resizeOptions.stretchToFill ? '100%' : 'auto',
+                    height: resizeOptions.stretchToFill ? '100%' : 'auto',
+                  }),
+                }}
                 onLoad={onImageLoad}
               />
             </div>
@@ -117,7 +128,13 @@ export function ImagePreview({
           >
             <div className="text-center">
               <p className="text-gray-500">{t('image.upload.prompt')}</p>
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onFileSelect} />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={onFileSelect}
+              />
             </div>
           </div>
         )}
