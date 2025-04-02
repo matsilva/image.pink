@@ -84,7 +84,7 @@ function App() {
 
       <div className="flex w-full h-[calc(100vh-4rem)] relative">
         {/* Left column - Tool selection */}
-        <aside className="hidden w-44 shrink-0 lg:block border-r border-gray-200 py-8 bg-white flex flex-col justify-between">
+        <aside className="w-44 shrink-0 lg:block border-r border-gray-200 py-8 bg-white flex flex-col justify-between">
           <nav className="flex flex-col gap-2">
             <button
               onClick={() => setSelectedTool('padding')}
@@ -111,17 +111,35 @@ function App() {
             {imageState.url ? (
               <div className="relative h-full flex items-center justify-center">
                 <div
-                  className={`max-w-full max-h-full ${padding.options.isTransparent ? '' : 'bg-white'} shadow-sm rounded-sm`}
+                  className={`max-w-full max-h-full border-2 border-dashed border-gray-300 rounded-sm ${
+                    selectedTool === 'padding'
+                      ? `${padding.options.isTransparent ? '' : 'bg-white'}`
+                      : resizeOptions.backgroundColor
+                      ? ''
+                      : 'bg-white'
+                  }`}
                   style={{
-                    padding: `${padding.options.vertical}px ${padding.options.horizontal}px`,
-                    border: padding.options.isTransparent ? '2px dashed #d1d5db' : 'none',
+                    ...(selectedTool === 'padding' && {
+                      padding: `${padding.options.vertical}px ${padding.options.horizontal}px`,
+                      border: padding.options.isTransparent ? '2px dashed #d1d5db' : 'none',
+                    }),
+                    ...(selectedTool === 'resize' && {
+                      width: `${resizeOptions.width}px`,
+                      height: `${resizeOptions.height}px`,
+                      backgroundColor: resizeOptions.backgroundColor || 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }),
                   }}
                 >
                   <img
                     ref={imageRef}
                     src={imageState.url}
                     alt="Preview"
-                    className="max-w-full max-h-full object-contain"
+                    className={`max-w-full max-h-full ${
+                      selectedTool === 'resize' && resizeOptions.stretchToFill ? 'w-full h-full object-cover' : 'object-contain'
+                    }`}
                     onLoad={handleImageLoad}
                   />
                 </div>
